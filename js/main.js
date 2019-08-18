@@ -16,18 +16,40 @@ let snake = {
     move() {
         let snakeX = snake.size[0].x,
             snakeY = snake.size[0].y;
-        if (snake.direction === "left" && snake.direction !== "right") {
-            snakeX -= box;
+        switch (snake.direction) {
+            case "ArrowLeft":
+                snakeX -= box;
+                break;
+            case "ArrowRight":
+                snakeX += box;
+                break;
+            case "ArrowUp":
+                snakeY -= box;
+                break;
+            case "ArrowDown":
+                snakeY += box;
+                break;
         }
-        if (snake.direction === "right" && snake.direction !== "left") {
-            snakeX += box;
-        }
-        if (snake.direction === "up" && snake.direction !== "down") {
-            snakeY -= box;
-        }
-        if (snake.direction === "down" && snake.direction !== "up") {
-            snakeY += box;
-        }
+        // if ((snakeX - box) === snake.size[1].x) snakeX = snake.size[0].x;
+        // else if (snake.direction === "ArrowLeft" && snake.direction !== "ArrowRight") {
+        //     snakeX -= box;
+        // }
+        //
+        // if ((snakeX + box) === snake.size[1].x) snakeX = snake.size[0].x;
+        // else if (snake.direction === "ArrowRight" && snake.direction !== "ArrowLeft") {
+        //     snakeX += box;
+        // }
+        //
+        // if ((snakeY - box) === snake.size[1].x) snakeY = snake.size[0].y;
+        // else if (snake.direction === "ArrowUp" && snake.direction !== "ArrowDown") {
+        //     snakeY -= box;
+        // }
+        //
+        // if ((snakeY + box) === snake.size[1].x) snakeY = snake.size[0].y;
+        // else if (snake.direction === "ArrowDown" && snake.direction !== "ArrowUp") {
+        //     snakeY += box;
+        // }
+
         return this.newHead = {
             x: snakeX,
             y: snakeY
@@ -46,18 +68,18 @@ let snake = {
     snakeTransition(e) {
         if (e.x === -box) {
             e.x = canvas.width;
-            snake.direction = 'left';
+            snake.direction = 'ArrowLeft';
         } else if (e.x === canvas.width) {
             e.x = 0;
-            snake.direction = 'right';
+            snake.direction = 'ArrowRight';
         }
 
         if (e.y === -box) {
             e.y = canvas.height;
-            snake.direction = 'up';
+            snake.direction = 'ArrowUp';
         } else if (e.y === canvas.height) {
             e.y = 0;
-            snake.direction = 'down';
+            snake.direction = 'ArrowDown';
         }
     }
 };
@@ -100,14 +122,12 @@ snake.startSize();
 document.addEventListener("keydown", direction);
 
 function direction(e) {
-    if(e.code === "ArrowLeft" && snake.direction !== "right")
-        snake.direction = "left";
-    else if(e.code === "ArrowUp" && snake.direction !== "down")
-        snake.direction = "up";
-    else if(e.code === "ArrowRight" && snake.direction !== "left")
-        snake.direction = "right";
-    else if(e.code === "ArrowDown" && snake.direction !== "up")
-        snake.direction = "down";
+    snake.direction = e.code;
+    console.log(snake.size);
+    if (e.code !== snake.direction) {
+        snakeMovement();
+    }
+    return e.code;
 }
 let eaten = false;
 
@@ -129,7 +149,6 @@ function snakeMovement() {
         snake.size.pop();
     }
     snake.snakeTransition(snake.newHead);
-
 }
 setInterval(snakeMovement, 100);
 
