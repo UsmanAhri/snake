@@ -9,7 +9,17 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <div class="game-over-wrap">
+        <div id="game-over">
+            <p class="game-over__title">Game Over</p>
+            <p class="game-over__score">Best score</p>
+            <input type="button" class="game-over__score-number game-over__best-score" value="0">
+            <p class="game-over__score">Your score</p>
+            <input type="button" class="game-over__score-number game-over__score" value="0">
+        </div>
+    </div>
     <div class="canvas-wrap">
+
         <canvas id="canvas" width="600" height="540"></canvas>
     </div>
     <script src="js/main.js"></script>
