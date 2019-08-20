@@ -12,14 +12,37 @@
     <div class="game-over-wrap">
         <div id="game-over">
             <p class="game-over__title">Game Over</p>
-            <p class="game-over__score">Best score</p>
+            <p class="game-over__score-title">Best score</p>
             <input type="button" class="game-over__score-number game-over__best-score" value="0">
-            <p class="game-over__score">Your score</p>
+            <p class="game-over__score-title">Your score</p>
             <input type="button" class="game-over__score-number game-over__score" value="0">
         </div>
     </div>
     <div class="canvas-wrap">
-
+        <div class="settings">
+            <div class="settings__score">
+                <div>
+                    <p class="settings__score-title">Your score</p>
+                    <input type="button" class="settings__score-input" value="0">
+                </div>
+                <button class="settings__start">Start</button>
+            </div>
+            <div class="settings__cells-wrap">
+                <div class="settings__cell">
+                    <p class="settings__cell-title">Box size</p>
+                    <input type="text" name="box" class="settings__cell-input" value="10">
+                </div>
+                <div class="settings__cell">
+                    <p class="settings__cell-title">Speed</p>
+                    <input type="text" class="settings__cell-input">
+                </div>
+                <div class="settings__cell">
+                    <p class="settings__cell-title">Playing field size</p>
+                    <input type="text" class="settings__cell-input">
+                    <input type="text" class="settings__cell-input">
+                </div>
+            </div>
+        </div>
         <canvas id="canvas" width="600" height="540"></canvas>
     </div>
     <script src="js/main.js"></script>

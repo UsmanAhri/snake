@@ -10,7 +10,7 @@ let box,
 box = 20;
 speed = 100;
 
-let gameOver = document.getElementById('game-over-wrap'),
+let gameOverBlock = document.querySelector('.game-over-wrap'),
     inputScore = document.querySelector('.game-over__score'),
     inputBestScore = document.querySelector('.game-over__best-score');
 
@@ -68,21 +68,6 @@ let snake = {
             e.y = 0;
             snake.direction = 'ArrowDown';
         }
-    },
-    eatTail() {
-        for (i = 3; i < snake.size.length; i++) {
-            if (snake.size[0].x === snake.size[i].x && snake.size[0].y === snake.size[i].y) {
-                //gameOver.style.display = 'none';
-                clearInterval(snakeMovement);
-                if (score > bestScore) bestScore = score;
-                inputScore.value = score;
-                inputBestScore.value = bestScore;
-                console.log('yes')
-            }
-            else {
-                console.log('no')
-            }
-        }
     }
 };
 let food = {
@@ -116,6 +101,11 @@ let food = {
         };
     }
 };
+let settings = {
+    width: canvas.width,
+    score: 0,
+
+};
 
 food.generateFood(3);
 snake.startSize();
@@ -148,7 +138,6 @@ function direction() {
 
 let eaten = false;
 
-
 let snakeMovement = function () {
     direction();
     for (i = 0; i < food.amount.length; i++) {
@@ -166,14 +155,29 @@ let snakeMovement = function () {
         snake.size.unshift(snake.move());
         snake.size.pop();
     }
+    for (i = 3; i < snake.size.length; i++) {
+        if (snake.size[0].x === snake.size[i].x && snake.size[0].y === snake.size[i].y) {
+            gameOver();
+        }
+    }
     snake.snakeTransition(snake.newHead);
 };
 setInterval(snakeMovement, speed);
-setInterval(snake.eatTail, 90);
 
+function gameOver() {
+    gameOverBlock.style.display = 'flex';
+    snake.direction = '';
+    clearInterval(snakeMovement);
+    document.removeEventListener("keydown", directionCode);
+    snake.size = [];
+    snake.startSize();
+    if (score > bestScore) bestScore = score;
+    inputScore.value = score;
+    inputBestScore.value = bestScore;
+    score = 0;
+}
 
 function drawGame() {
-
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "#000000";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -186,6 +190,5 @@ function drawGame() {
         ctx.fillStyle = "#009000";
         ctx.fillRect(snake.size[i].x, snake.size[i].y, box, box);
     }
-
 }
-let game = setInterval(drawGame, 50);
+setInterval(drawGame, 50);

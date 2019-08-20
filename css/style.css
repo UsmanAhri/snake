@@ -7,6 +7,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
     min-height: 100vh;
     background-color: #aaaaaa;
 }
@@ -41,7 +42,7 @@
     letter-spacing: 5px;
     margin-bottom: 20px;
 }
-.game-over__score {
+.game-over__score-title {
     color: #ffffff;
     font-family: sans-serif;
     font-size: 18px;
@@ -59,4 +60,49 @@
     border: none;
     outline: none;
     background-color: #e67e22;
+}
+.settings {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 600px;
+    background-color: black;
+    margin-bottom: 15px;
+    padding: 15px;
+    position: relative;
+}
+.settings__score {
+    display: flex;
+    align-items: center;
+    color: #ffffff;
+    font-size: 16px;
+}
+.settings__score-input {
+    margin-top: 10px;
+    width: 100%;
+}
+.settings__cells-wrap {
+    display: flex;
+}
+.settings__cell {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #ffffff;
+}
+.settings__cell:not(:last-child) {
+    margin-right: 10px;
+}
+.settings__cell-input {
+    width: 60px;
+}
+.settings__start {
+    width: 50px;
+    height: 25px;
+    text-align: center;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+    margin-left: 20px;
 }
