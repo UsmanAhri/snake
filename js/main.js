@@ -1,21 +1,15 @@
 const   canvas     = document.getElementById('canvas'),
         ctx      = canvas.getContext("2d");
 
-ctx.fillStyle = 'black';
-ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-let box,
-    speed;
-
-box = 20;
-speed = 100;
-
-let gameOverBlock = document.querySelector('.game-over-wrap'),
-    inputScore = document.querySelector('.game-over__score'),
-    inputBestScore = document.querySelector('.game-over__best-score');
-
-let score = 0,
-    bestScore = 0;
+let settings = {
+    score: document.getElementById('settings-score').value,
+    bestScore: document.getElementById('settings-best-score').value,
+    box: 10,
+    speed: 100,
+    width: 600,
+    height: 540,
+    startButton: document.getElementById('settings__start')
+};
 
 let snake = {
     direction: '',
@@ -26,16 +20,16 @@ let snake = {
             snakeY = snake.size[0].y;
 
         if (snake.direction === "ArrowLeft" && snake.direction !== "ArrowRight") {
-            snakeX -= box;
+            snakeX -= settings.box;
         }
         if (snake.direction === "ArrowRight" && snake.direction !== "ArrowLeft") {
-            snakeX += box;
+            snakeX += settings.box;
         }
         if (snake.direction === "ArrowUp" && snake.direction !== "ArrowDown") {
-            snakeY -= box;
+            snakeY -= settings.box;
         }
         if (snake.direction === "ArrowDown" && snake.direction !== "ArrowUp") {
-            snakeY += box;
+            snakeY += settings.box;
         }
         return this.newHead = {
             x: snakeX,
@@ -45,15 +39,15 @@ let snake = {
     startSize () {
         for (i = 0; i < 3; i++) {
             let newElem = {
-                x: canvas.width / 2 - ((canvas.width / 2) % box),
-                y: canvas.height / 2 - ((canvas.height / 2) % box),
+                x: canvas.width / 2 - ((canvas.width / 2) % settings.box),
+                y: canvas.height / 2 - ((canvas.height / 2) % settings.box),
             };
 
             snake.size.push(newElem);
         }
     },
     snakeTransition(e) {
-        if (e.x === -box) {
+        if (e.x === -settings.box) {
             e.x = canvas.width;
             snake.direction = 'ArrowLeft';
         } else if (e.x === canvas.width) {
@@ -61,7 +55,7 @@ let snake = {
             snake.direction = 'ArrowRight';
         }
 
-        if (e.y === -box) {
+        if (e.y === -settings.box) {
             e.y = canvas.height;
             snake.direction = 'ArrowUp';
         } else if (e.y === canvas.height) {
@@ -77,8 +71,8 @@ let food = {
             let x = Math.random() * canvas.width,
                 y = Math.random() * canvas.height;
             let newItem = {
-                x: x - (x % box),
-                y: y - (y % box)
+                x: x - (x % settings.box),
+                y: y - (y % settings.box)
             };
             let itemExists = false;
             for (i = 0; i < this.amount.length; i++) {
@@ -96,21 +90,50 @@ let food = {
         let x = Math.random() * canvas.width,
             y = Math.random() * canvas.height;
         return newItem = {
-            x: x - (x % box),
-            y: y - (y % box),
+            x: x - (x % settings.box),
+            y: y - (y % settings.box),
         };
     }
 };
-let settings = {
-    width: canvas.width,
-    score: 0,
 
-};
+function startGame() {
+    settings.height = 540;
+    settings.width = 600;
+    let personalSettings = {
+        box: document.getElementById('box').value,
+        speed: document.getElementById('speed').value,
+        width: document.getElementById('playing-field-width').value,
+        height: document.getElementById('playing-field-height').value,
+        startButton: document.getElementById('settings__start')
+    };
 
-food.generateFood(3);
-snake.startSize();
+    if (personalSettings.box >= 1 && personalSettings.box <= 3) {
+        settings.box = Math.round(personalSettings.box) * 10;
+    }
 
-document.addEventListener("keydown", directionCode);
+    if (personalSettings.speed >= 1 && personalSettings.speed <= 100) {
+        settings.speed = Math.round(personalSettings.speed) * 10;
+    }
+
+
+    food.generateFood(3);
+    snake.startSize();
+    document.addEventListener("keydown", directionCode);
+    //settings.box = document.getElementById('box').value * 10;
+    console.log(personalSettings.box);
+    setInterval(snakeMovement, settings.speed);
+    setInterval(drawGame, 50);
+}
+
+settings.startButton.addEventListener("click", function () {
+    startGame();
+});
+
+let gameOverBlock = document.querySelector('.game-over-wrap'),
+    inputScore = document.querySelector('.game-over__score'),
+    inputBestScore = document.querySelector('.game-over__best-score');
+
+
 
 let directionArray = [];
 function directionCode(e) {
@@ -149,7 +172,7 @@ let snakeMovement = function () {
     if (eaten) {
         snake.size.unshift(snake.move());
         food.amount[i] = food.generateNewFood ();
-        score++;
+        settings.score += 1;
         eaten = false;
     } else {
         snake.size.unshift(snake.move());
@@ -162,7 +185,6 @@ let snakeMovement = function () {
     }
     snake.snakeTransition(snake.newHead);
 };
-setInterval(snakeMovement, speed);
 
 function gameOver() {
     gameOverBlock.style.display = 'flex';
@@ -171,24 +193,29 @@ function gameOver() {
     document.removeEventListener("keydown", directionCode);
     snake.size = [];
     snake.startSize();
-    if (score > bestScore) bestScore = score;
-    inputScore.value = score;
-    inputBestScore.value = bestScore;
-    score = 0;
+    if (settings.score > settings.bestScore) settings.bestScore = settings.score;
+    inputScore.value = settings.score;
+    inputBestScore.value = settings.bestScore;
+    settings.score = 0;
 }
 
 function drawGame() {
+    canvas.width = settings.width;
+    canvas.height = settings.height;
+
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "#000000";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     for (i = 0; i < food.amount.length; i++) {
         ctx.fillStyle = "#ff0000";
-        ctx.fillRect(food.amount[i].x, food.amount[i].y, box, box);
+        ctx.fillRect(food.amount[i].x, food.amount[i].y, settings.box, settings.box);
     }
 
     for(i = 0; i < snake.size.length; i++) {
         ctx.fillStyle = "#009000";
-        ctx.fillRect(snake.size[i].x, snake.size[i].y, box, box);
+        ctx.fillRect(snake.size[i].x, snake.size[i].y, settings.box, settings.box);
     }
 }
-setInterval(drawGame, 50);

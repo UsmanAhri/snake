@@ -71,18 +71,20 @@
     padding: 15px;
     position: relative;
 }
-.settings__score {
+.settings__scores-wrap {
     display: flex;
-    align-items: center;
+    justify-content: space-between;
+    width: 145px;
     color: #ffffff;
     font-size: 16px;
 }
-.settings__score-input {
+.settings__score-view {
     margin-top: 10px;
     width: 100%;
 }
 .settings__cells-wrap {
     display: flex;
+    align-items: flex-end;
 }
 .settings__cell {
     display: flex;
@@ -93,11 +95,22 @@
 }
 .settings__cell:not(:last-child) {
     margin-right: 10px;
+    width: 56px;
+}
+.settings__cell:last-child {
+    margin-left: 10px;
 }
 .settings__cell-input {
     width: 60px;
+    margin-top: 10px;
 }
-.settings__start {
+.settings__cell-title {
+    text-align: center;
+}
+.settings__cell-title span {
+    font-size: 12px;
+}
+#settings__start {
     width: 50px;
     height: 25px;
     text-align: center;
@@ -105,4 +118,9 @@
     outline: none;
     cursor: pointer;
     margin-left: 20px;
+}
+.settings__cell-input-wrap {
+    display: flex;
+    justify-content: space-between;
+    width: 130px;
 }
