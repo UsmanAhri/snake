@@ -1,9 +1,10 @@
 const   canvas     = document.getElementById('canvas'),
-        ctx      = canvas.getContext("2d");
+        ctx        = canvas.getContext("2d");
+
+let score          = 0,
+    bestScore      = 0;
 
 let settings = {
-    score: document.getElementById('settings-score').value,
-    bestScore: document.getElementById('settings-best-score').value,
     box: 10,
     speed: 100,
     width: 600,
@@ -11,8 +12,14 @@ let settings = {
     startButton: document.getElementById('settings__start')
 };
 
+let gameOverBlock = document.querySelector('.game-over-wrap'),
+    inputScore = document.querySelector('.game-over__score'),
+    inputBestScore = document.querySelector('.game-over__best-score');
+
+let intervalId;
+
 let snake = {
-    direction: '',
+    direction: 'ArrowRight',
     size: [],
     newHead: {},
     move() {
@@ -37,29 +44,31 @@ let snake = {
         };
     },
     startSize () {
-        for (i = 0; i < 3; i++) {
+        for (let i = 0; i < 3; i++) {
+            let halfWidth = canvas.width / 2;
+            let halfHeight = canvas.height / 2;
             let newElem = {
-                x: canvas.width / 2 - ((canvas.width / 2) % settings.box),
-                y: canvas.height / 2 - ((canvas.height / 2) % settings.box),
+                x: halfWidth - (halfWidth % settings.box),
+                y: halfHeight - (halfHeight % settings.box),
             };
 
             snake.size.push(newElem);
         }
     },
-    snakeTransition(e) {
-        if (e.x === -settings.box) {
-            e.x = canvas.width;
+    snakeTransition(newHead) {
+        if (newHead.x === -settings.box) {
+            newHead.x = canvas.width;
             snake.direction = 'ArrowLeft';
-        } else if (e.x === canvas.width) {
-            e.x = 0;
+        } else if (newHead.x === canvas.width) {
+            newHead.x = 0;
             snake.direction = 'ArrowRight';
         }
 
-        if (e.y === -settings.box) {
-            e.y = canvas.height;
+        if (newHead.y === -settings.box) {
+            newHead.y = canvas.height;
             snake.direction = 'ArrowUp';
-        } else if (e.y === canvas.height) {
-            e.y = 0;
+        } else if (newHead.y === canvas.height) {
+            newHead.y = 0;
             snake.direction = 'ArrowDown';
         }
     }
@@ -71,11 +80,11 @@ let food = {
             let x = Math.random() * canvas.width,
                 y = Math.random() * canvas.height;
             let newItem = {
-                x: x - (x % settings.box),
+                x: x - (x % settings.box), //
                 y: y - (y % settings.box)
             };
             let itemExists = false;
-            for (i = 0; i < this.amount.length; i++) {
+            for (let i = 0; i < this.amount.length; i++) {
                 if (this.amount[i] === newItem) {
                     itemExists = true;
                 }
@@ -96,44 +105,90 @@ let food = {
     }
 };
 
-function startGame() {
-    settings.height = 540;
-    settings.width = 600;
-    let personalSettings = {
-        box: document.getElementById('box').value,
-        speed: document.getElementById('speed').value,
-        width: document.getElementById('playing-field-width').value,
-        height: document.getElementById('playing-field-height').value,
-        startButton: document.getElementById('settings__start')
-    };
-
-    if (personalSettings.box >= 1 && personalSettings.box <= 3) {
-        settings.box = Math.round(personalSettings.box) * 10;
-    }
-
-    if (personalSettings.speed >= 1 && personalSettings.speed <= 100) {
-        settings.speed = Math.round(personalSettings.speed) * 10;
-    }
-
-
-    food.generateFood(3);
-    snake.startSize();
-    document.addEventListener("keydown", directionCode);
-    //settings.box = document.getElementById('box').value * 10;
-    console.log(personalSettings.box);
-    setInterval(snakeMovement, settings.speed);
-    setInterval(drawGame, 50);
-}
-
 settings.startButton.addEventListener("click", function () {
     startGame();
 });
 
-let gameOverBlock = document.querySelector('.game-over-wrap'),
-    inputScore = document.querySelector('.game-over__score'),
-    inputBestScore = document.querySelector('.game-over__best-score');
+function validationCheck(obj) {
+    let minBoxSize      = 1,
+        maxBoxSize      = 3,
+        minSpeed        = 5,
+        maxSpeed        = 1;
 
+    // Box size validation
 
+    if (obj.box >= minBoxSize && obj.box <= maxBoxSize) {
+        obj.box = Math.round(obj.box) * 10;
+    } else if (obj.box < minBoxSize) {
+        document.getElementById('box').value = minBoxSize;
+    } else if (obj.box > maxBoxSize) {
+        obj.box = maxBoxSize * 10;
+        document.getElementById('box').value = maxBoxSize;
+    }
+
+    // Speed validation
+
+    if (obj.speed <= minSpeed && obj.speed >= maxSpeed) {
+        obj.speed = Math.round(obj.speed) * 100;
+    }
+    else if (obj.speed > minSpeed) {
+        obj.speed = minSpeed * 100;
+    }
+    else {
+        obj.speed = maxSpeed * 100;
+    }
+}
+
+function startGame() {
+    let personalSettings = {
+        box: document.getElementById('box').value,
+        speed: document.getElementById('speed').value,
+    };
+
+    validationCheck(personalSettings);
+    settings.box = personalSettings.box;
+    settings.speed = personalSettings.speed;
+
+    console.log(personalSettings.speed);
+    console.log(settings.speed);
+
+    gameOverBlock.style.display = 'none';
+    food.generateFood(3);
+    snake.startSize();
+
+    document.addEventListener("keydown", directionCode);
+    snake.direction = "ArrowRight";
+
+    intervalId = setInterval(snakeMovement, settings.speed);
+    setInterval(drawGame, 50);
+
+    document.getElementById('settings-score').value = score;
+    document.getElementById('box').setAttribute('disabled', 'disabled');
+    document.getElementById('speed').setAttribute('disabled', 'disabled');
+    document.getElementById('settings__start').setAttribute('disabled', 'disabled');
+}
+
+function gameOver() {
+    gameOverBlock.style.display = 'flex';
+    snake.direction = '';
+    clearInterval(intervalId);
+    document.removeEventListener("keydown", directionCode);
+
+    snake.size = [];
+    snake.direction = '';
+
+    settings.speed = 100;
+
+    if (score > bestScore) bestScore = score;
+    inputScore.value = score;
+    inputBestScore.value = bestScore;
+    score = 0;
+    document.getElementById('settings-best-score').value = bestScore;
+
+    document.getElementById('box').removeAttribute('disabled', 'disabled');
+    document.getElementById('speed').removeAttribute('disabled', 'disabled');
+    document.getElementById('settings__start').removeAttribute('disabled', 'disabled');
+}
 
 let directionArray = [];
 function directionCode(e) {
@@ -172,7 +227,8 @@ let snakeMovement = function () {
     if (eaten) {
         snake.size.unshift(snake.move());
         food.amount[i] = food.generateNewFood ();
-        settings.score += 1;
+        score++;
+        document.getElementById('settings-score').value = score;
         eaten = false;
     } else {
         snake.size.unshift(snake.move());
@@ -186,18 +242,6 @@ let snakeMovement = function () {
     snake.snakeTransition(snake.newHead);
 };
 
-function gameOver() {
-    gameOverBlock.style.display = 'flex';
-    snake.direction = '';
-    clearInterval(snakeMovement);
-    document.removeEventListener("keydown", directionCode);
-    snake.size = [];
-    snake.startSize();
-    if (settings.score > settings.bestScore) settings.bestScore = settings.score;
-    inputScore.value = settings.score;
-    inputBestScore.value = settings.bestScore;
-    settings.score = 0;
-}
 
 function drawGame() {
     canvas.width = settings.width;

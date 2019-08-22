@@ -61,10 +61,11 @@
     outline: none;
     background-color: #e67e22;
 }
-.settings {
+.top-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
     width: 600px;
     background-color: black;
     margin-bottom: 15px;
@@ -82,7 +83,7 @@
     margin-top: 10px;
     width: 100%;
 }
-.settings__cells-wrap {
+.settings__wrap {
     display: flex;
     align-items: flex-end;
 }
@@ -94,11 +95,7 @@
     color: #ffffff;
 }
 .settings__cell:not(:last-child) {
-    margin-right: 10px;
-    width: 56px;
-}
-.settings__cell:last-child {
-    margin-left: 10px;
+    margin-right: 20px;
 }
 .settings__cell-input {
     width: 60px;
@@ -118,9 +115,4 @@
     outline: none;
     cursor: pointer;
     margin-left: 20px;
-}
-.settings__cell-input-wrap {
-    display: flex;
-    justify-content: space-between;
-    width: 130px;
 }
