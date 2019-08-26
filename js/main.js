@@ -109,12 +109,25 @@ let food = {
     }
 };
 
+let crazyMode = document.getElementById("crazy-mode");
+
+crazyMode.addEventListener("click", function () {
+    crazyModeSettingsDisable();
+});
+
+function crazyModeSettingsDisable() {
+    document.getElementById('box').toggleAttribute('disabled');
+    document.getElementById('speed').toggleAttribute('disabled');
+}
+
 startButton.addEventListener("click", function () {
     startGame();
 });
 
 function validationCheck(obj) {
-    let minBoxSize = 1,
+    let factorSize = 10,
+        factorSpeed = 100,
+        minBoxSize = 1,
         maxBoxSize = 3,
         minSpeed = 1,
         maxSpeed = 10;
@@ -122,11 +135,12 @@ function validationCheck(obj) {
     // Box body validation
 
     if (obj.box >= minBoxSize && obj.box <= maxBoxSize) {
-        obj.box = Math.round(obj.box) * 10;
+        obj.box = Math.round(obj.box) * factorSize;
     } else if (obj.box < minBoxSize) {
+        obj.box = minBoxSize * factorSize;
         document.getElementById('box').value = minBoxSize;
     } else if (obj.box > maxBoxSize) {
-        obj.box = maxBoxSize * 10;
+        obj.box = maxBoxSize * factorSize;
         document.getElementById('box').value = maxBoxSize;
     }
 
@@ -134,10 +148,10 @@ function validationCheck(obj) {
 
     if (obj.speed >= minSpeed && obj.speed <= maxSpeed) {
         if (obj.speed === maxSpeed) {
-            obj.speed = 100 * ((maxSpeed + 1) - Math.round(obj.speed));
+            obj.speed = factorSpeed * ((maxSpeed + 1) - Math.round(obj.speed));
         }
         else {
-            obj.speed = 100 * (maxSpeed - Math.round(obj.speed));
+            obj.speed = factorSpeed * (maxSpeed - Math.round(obj.speed));
         }
     }
     else if (obj.speed < minSpeed) {
@@ -157,8 +171,16 @@ function startGame() {
     };
 
     validationCheck(personalSettings);
-    settings.box = personalSettings.box;
-    settings.speed = personalSettings.speed;
+    if (crazyMode.checked === true) {
+        settings.box = 10;
+        settings.speed = 20;
+        document.getElementById('box').value = 1;
+        document.getElementById('speed').value = 20;
+    }
+    else {
+        settings.box = personalSettings.box;
+        settings.speed = personalSettings.speed;
+    }
 
     gameOverBlock.style.display = 'none';
     food.generateFood(3);
@@ -173,6 +195,7 @@ function startGame() {
     document.getElementById('settings-score').value = score;
     document.getElementById('box').setAttribute('disabled', 'disabled');
     document.getElementById('speed').setAttribute('disabled', 'disabled');
+    document.getElementById('crazy-mode').setAttribute('disabled', 'disabled');
     document.getElementById('settings__start').setAttribute('disabled', 'disabled');
 }
 
