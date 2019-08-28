@@ -193,6 +193,8 @@ function startGame() {
     intervalId = setInterval(snakeMovement, settings.speed);
     setInterval(drawGame, 50);
 
+    stopButton.removeAttribute('disabled');
+
     document.getElementById('settings-score').value = score;
     document.getElementById('box').setAttribute('disabled', 'disabled');
     document.getElementById('speed').setAttribute('disabled', 'disabled');
