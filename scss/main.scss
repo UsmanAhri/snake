@@ -165,19 +165,37 @@ b, strong {
 	}
 }
 
-#settings__start {
+.settings__button {
 	display: block;
-	padding: 10px;
+	padding: 8px 10px;
 	outline: none;
 	color: white;
 	font-size: 15px;
 	text-transform: uppercase;
+	cursor: pointer;
+	&-wrap {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		height: 85px;
+	}
+}
+
+#settings__start {
 	background-color: #50d28b;
 	border: solid 2px #2caa65;
-	cursor: pointer;
 	&:hover {
 		background-color: darkslategray;
 		border: solid 2px #1c2f2f;
+	}
+}
+
+#settings__stop {
+	background-color: #ed3a34;
+	border: solid 2px #b63130;
+	&:hover {
+		background-color: darkred;
+		border: solid 2px #2f150d;
 	}
 }
 
@@ -257,6 +275,6 @@ label.sw {
 	}
 	&__img {
 		width: 60px;
-		margin-left: 5px;
+		margin: 5px 0 0 5px;
 	}
 }

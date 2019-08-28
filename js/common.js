@@ -4,7 +4,8 @@ const   canvas = document.getElementById('canvas'),
 let score = 0,
     bestScore = 0;
 
-let startButton = document.getElementById('settings__start');
+let startButton = document.getElementById('settings__start'),
+    stopButton = document.getElementById('settings__stop');
 
 let settings = {
     box: 10,
@@ -197,6 +198,14 @@ function startGame() {
     document.getElementById('speed').setAttribute('disabled', 'disabled');
     document.getElementById('crazy-mode').setAttribute('disabled', 'disabled');
     document.getElementById('settings__start').setAttribute('disabled', 'disabled');
+}
+
+stopButton.addEventListener("click", function () {
+    stopGame();
+});
+
+function stopGame() {
+    gameOver();
 }
 
 function gameOver() {
