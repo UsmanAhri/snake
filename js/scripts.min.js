@@ -1,8 +1,29 @@
 const   canvas = document.getElementById('canvas'),
     ctx = canvas.getContext("2d");
-
 let score = 0,
-    bestScore = 0;
+    bestScore;
+
+function initializeGameBar() {
+    bestScore = getCookie('bestScore');
+
+    if (!bestScore) {
+        bestScore = 0;
+
+    }
+    document.getElementById('settings-score').value = score;
+    document.getElementById('settings-best-score').value = bestScore;
+    document.getElementById('box').value = 1;
+    document.getElementById('speed').value = 10;
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    initializeGameBar();
+});
+
+function getCookie(name) {
+    let parts = document.cookie.split("; " + name + "=");
+    if (parts.length === 2) return parts.pop().split(";").shift();
+}
 
 let startButton = document.getElementById('settings__start'),
     stopButton = document.getElementById('settings__stop');
@@ -195,7 +216,6 @@ function startGame() {
 
     stopButton.removeAttribute('disabled');
 
-    document.getElementById('settings-score').value = score;
     document.getElementById('box').setAttribute('disabled', 'disabled');
     document.getElementById('speed').setAttribute('disabled', 'disabled');
     document.getElementById('crazy-mode').setAttribute('disabled', 'disabled');
@@ -203,12 +223,8 @@ function startGame() {
 }
 
 stopButton.addEventListener("click", function () {
-    stopGame();
-});
-
-function stopGame() {
     gameOver();
-}
+});
 
 function gameOver() {
     gameOverBlock.style.display = 'flex';
@@ -221,7 +237,10 @@ function gameOver() {
 
     settings.speed = 100;
 
-    if (score > bestScore) bestScore = score;
+    if (score > bestScore) {
+        bestScore = score;
+        document.cookie = "bestScore=" + bestScore;
+    }
     inputScore.value = score;
     inputBestScore.value = bestScore;
     score = 0;
